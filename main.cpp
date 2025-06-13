@@ -1,15 +1,16 @@
-
+#include <iostream>
+using namespace std;
 
 class Klient {
-    int ID_Klienta
-    string Imie
-    string Nazwisko
-    double Saldo_Konta
-    double Oprocentowanie
-}
+    int ID_Klienta;
+    string Imie;
+    string Nazwisko;
+    double Saldo_Konta;
+    double Oprocentowanie;
+};
 
 class KlientVIP : public Klient {
-    double dodatkoweOprocentowanie
+    double dodatkoweOprocentowanie;
 }
 
 //Dodawanie nowych klientów
