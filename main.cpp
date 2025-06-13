@@ -40,6 +40,20 @@ void Top_Up_Account(Klient& X)  {
 }
 
 //Wypłata z konta klienta - do wysokości salda
+void Withdraw_Cash(Klient& X) {
+    int T_Value;
+    cout<<"Wyplacasz pieniadze z konta"<<endl;
+    do {
+    cout<<"Podaj kwote wyplaty: ";
+    cin>>T_Value;
+    if (T_Value<=0) {
+        cout<<"Kwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
+    } else if (T_Value > X.Saldo_Konta) {
+        cout<<"Brak wystarczajacych srodkow. Sprbuj jeszcze raz"<<endl;
+    }
+    } while (T_Value <= 0 || T_Value > X.Saldo_Konta);
+    X.Saldo_Konta -= T_Value;
+}
 //Przelew pomiędzy dwoma istniejącymi kontami
 //Naliczenie oprocentowania dla konta
 //Wyświetlanie listy wszystkich klientów
