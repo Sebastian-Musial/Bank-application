@@ -54,7 +54,24 @@ void Withdraw_Cash(Klient& X) {
     } while (T_Value <= 0 || T_Value > X.Saldo_Konta);
     X.Saldo_Konta -= T_Value;
 }
+
 //Przelew pomiędzy dwoma istniejącymi kontami
+void Money_Transfer(Klient& X, Klient& Y) {
+    int T_Value;
+    cout<<"Przelewasz pieniadze na konto klienta o numerze " << Y.ID_Klienta <<endl;
+    do {
+    cout<<"Podaj kwote przelewu: ";
+    cin>>T_Value;
+    if (T_Value<=0) {
+        cout<<"Kwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
+    } else if (T_Value > X.Saldo_Konta) {
+        cout<<"Brak wystarczajacych srodkow. Sprbuj jeszcze raz"<<endl;
+    }
+    } while (T_Value <= 0 || T_Value > X.Saldo_Konta);
+    X.Saldo_Konta -= T_Value;
+    Y.Saldo_Konta += T_Value;
+}
+
 //Naliczenie oprocentowania dla konta
 //Wyświetlanie listy wszystkich klientów
 //Wyszukiwanie klienta po ID
