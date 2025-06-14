@@ -4,11 +4,19 @@
 using namespace std;
 
 class Klient {
+public:
     int ID_Klienta;
     string Imie;
     string Nazwisko;
     double Saldo_Konta;
     double Oprocentowanie;
+
+    //Konstruktor
+    Klient(int id_klienta, string imie, string nazwisko, double saldo_konta, double oprocentowanie) : 
+    ID_Klienta(id_klienta), Imie(imie), Nazwisko(nazwisko), Saldo_Konta(saldo_konta), Oprocentowanie(oprocentowanie) {}
+
+    //Konstruktor domyslny
+    Klient() {}
 };
 
 class KlientVIP : public Klient {
@@ -129,3 +137,11 @@ void Search_Client(vector<Klient>& X) {
         cout<< X[Index].Imie << " " << X[Index].Nazwisko << "\nSaldo konta: " << X[Index].Saldo_Konta << "\nOprocentowanie: " << (X[Index].Oprocentowanie - 1) * 100 << "%" << endl;
     }
 }
+
+//Testowy vector klientow
+vector<Klient> List_Client = {
+    {1234, "Adam", "Nowak", 1000, 1.02},
+    {3721, "Anna", "Rak", 10000, 1.10},
+    {919, "Patryk", "Konski", 100, 1.02},
+    {2222, "Elzbieta", "Krol", 2000, 1.02}
+};
