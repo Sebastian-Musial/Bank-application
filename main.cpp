@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -78,4 +79,12 @@ void Add_Interest_Money(Klient X) {
 }
 
 //Wyświetlanie listy wszystkich klientów
+void List_Of_Client(vector<Klient>& X) {  //Referencja w celu oszczędzania pamięci - większa szybkość bez kopiowania 
+    cout<<"Lista klientow"<<endl;
+    for (int i = 0; i < X.size(); i++)
+    {
+        cout << X[i].ID_Klienta << " " << X[i].Imie << " " << X[i].Nazwisko << " " << X[i].Saldo_Konta << " " << X[i].Oprocentowanie << endl;
+    }
+}
+
 //Wyszukiwanie klienta po ID
