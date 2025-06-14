@@ -88,3 +88,44 @@ void List_Of_Client(vector<Klient>& X) {  //Referencja w celu oszczędzania pami
 }
 
 //Wyszukiwanie klienta po ID
+void Search_Client(vector<Klient>& X) {
+    cout<<"Szukasz klienta"<<endl;
+    int ID;
+    char Choice = 'Y';
+    while (Choice == 'Y' || Choice == 'y') {
+        
+        do {
+            cout<<"Podaj ID klienta: ";
+            cin>>ID;
+
+            if (ID<0) { 
+                cout<<"Numer klienta musi byc dodatni"<<endl;
+                cout<<"Czy chcesz sprobowac jeszcze raz? Y/N: ";
+                cin>>Choice;
+                if (Choice == 'N' || Choice == 'n') return;
+                }
+        } while (ID < 0);
+
+        bool Found = false;
+        int Index;
+
+        for (int i = 0; i < X.size(); i++) {
+            if (ID == X[i].ID_Klienta) {
+                Found = true;
+                Index = i;
+                break;
+                }
+            }
+
+        if (!Found) {
+            cout<<"Nie ma klienta o podanym ID"<<endl;
+            cout<<"Czy chcesz sprobowac jeszcze raz? Y/N: ";
+            cin>>Choice;
+            continue;
+        }
+
+        //Ponizszy kod wykona sie tylko jak bedzie znaleziony klient (Found == True)
+        cout<<"Dane klienta "<< ID <<endl;
+        cout<< X[Index].Imie << " " << X[Index].Nazwisko << "\nSaldo konta: " << X[Index].Saldo_Konta << "\nOprocentowanie: " << (X[Index].Oprocentowanie - 1) * 100 << "%" << endl;
+    }
+}
