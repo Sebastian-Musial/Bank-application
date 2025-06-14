@@ -73,5 +73,9 @@ void Money_Transfer(Klient& X, Klient& Y) {
 }
 
 //Naliczenie oprocentowania dla konta
+void Add_Interest_Money(Klient X) {
+    X.Saldo_Konta *= X.Oprocentowanie;
+}
+
 //Wyświetlanie listy wszystkich klientów
 //Wyszukiwanie klienta po ID
