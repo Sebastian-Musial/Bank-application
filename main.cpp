@@ -18,25 +18,57 @@ public:
 
     //Konstruktor domyslny
     Klient() {}
+
+    //Destruktor wirtualny
+    virtual ~Klient() {}
 };
 
 class KlientVIP : public Klient {
-    double dodatkoweOprocentowanie;
+public:
+    double DodatkoweOprocentowanie;
+
+    //Konstruktor
+    KlientVIP(int id_klienta, string imie, string nazwisko, double saldo_konta, double oprocentowanie, double dodatkoweOprocentowanie) :
+    Klient(id_klienta, imie, nazwisko, saldo_konta, oprocentowanie), DodatkoweOprocentowanie(dodatkoweOprocentowanie) {}
+
+    //Konstruktor domyslny
+    KlientVIP() {}
 };
 
-//Dodawanie nowych klientów - Nowy klient saldo = 0, oprocentowanie = 2%
-Klient Add_Client(int Temp_ID) {
-    Klient Temporary;
-    cout<<"\nDodajesz wlasnie nowego klienta"<<endl;
-    cout<<"\nPodaj Imie: ";
-    cin>>Temporary.Imie;
-    cout<<"Podaj nazwisko: ";
-    cin>>Temporary.Nazwisko;
-    Temporary.Saldo_Konta = 0;
-    Temporary.Oprocentowanie = 1.02;
-    Temporary.ID_Klienta = Temp_ID + 1;
-    cout<<endl;
-    return Temporary;
+//Dodawanie nowych klientów - Nowy klient saldo = 0, oprocentowanie = 2%, VIP Dodatkowe oprocentowanie = 10%
+Klient* Add_Client(int Temp_ID) {
+    char VIP_Choice;
+
+    cout<<"Czy jest to klient VIP Y/N: ";
+    cin>>VIP_Choice;
+    if(VIP_Choice == 'Y' || VIP_Choice == 'y') {
+        KlientVIP* Temporary = new KlientVIP();
+        cout<<"\nDodajesz wlasnie nowego klienta"<<endl;
+        cout<<"\nPodaj Imie: ";
+        cin>>Temporary->Imie;
+        cout<<"Podaj nazwisko: ";
+        cin>>Temporary->Nazwisko;
+        
+        Temporary->Saldo_Konta = 0;
+        Temporary->Oprocentowanie = 1.02;
+        Temporary->DodatkoweOprocentowanie = 0.10;
+        Temporary->ID_Klienta = Temp_ID + 1;
+        cout<<endl;
+        return Temporary;
+    } else {
+        Klient* Temporary = new Klient();
+        cout<<"\nDodajesz wlasnie nowego klienta"<<endl;
+        cout<<"\nPodaj Imie: ";
+        cin>>Temporary->Imie;
+        cout<<"Podaj nazwisko: ";
+        cin>>Temporary->Nazwisko;
+
+        Temporary->Saldo_Konta = 0;
+        Temporary->Oprocentowanie = 1.02;
+        Temporary->ID_Klienta = Temp_ID + 1;
+        cout<<endl;
+        return Temporary;
+    }
 }
 
 //Zasilenie konta klienta
@@ -89,23 +121,33 @@ void Money_Transfer(Klient& X, Klient& Y) {
 
 //Naliczenie oprocentowania dla konta
 void Add_Interest_Money(Klient& X) {
-    X.Saldo_Konta *= X.Oprocentowanie;
+    KlientVIP* VIP = dynamic_cast<KlientVIP*>(&X);  //Rzutowanie wskaznika w celu wykrycia VIPa, w przypadku klientka nie VIP zwraca wartość nullptr 
+    if (VIP) {
+        X.Saldo_Konta *= (X.Oprocentowanie + VIP->DodatkoweOprocentowanie);
+    } else X.Saldo_Konta *= X.Oprocentowanie;
     cout<<"\nOprocentowanie naliczone\n"<<endl;
 }
 
 //Wyświetlanie listy wszystkich klientów
-void List_Of_Client(vector<Klient>& X) {  //Referencja w celu oszczędzania pamięci - większa szybkość bez kopiowania 
+void List_Of_Client(vector<Klient*>& X) {  //Referencja w celu oszczędzania pamięci - większa szybkość bez kopiowania 
     cout<<"\nLista klientow\n"<<endl;
     for (int i = 0; i < X.size(); i++)
     {
-        cout << X[i].ID_Klienta << " " << left << setw(12) << X[i].Imie << " " << left << setw(12) << X[i].Nazwisko 
-        << " Saldo konta: " << setw(20) << X[i].Saldo_Konta << " Oprocentowanie: " << setw(4) << (X[i].Oprocentowanie - 1) * 100 << "%" << endl;
+        KlientVIP* VIP = dynamic_cast<KlientVIP*>(X[i]);
+        if (VIP) {
+            cout << X[i]->ID_Klienta << " " << left << setw(12) << X[i]->Imie << " " << left << setw(12) << X[i]->Nazwisko 
+            << " Saldo konta: " << setw(20) << X[i]->Saldo_Konta << " Oprocentowanie: " << setw(4) << (X[i]->Oprocentowanie - 1) * 100 << "% " 
+            << "Dodatkowe oprocentowanie: " << setw(4) << VIP ->DodatkoweOprocentowanie * 100 << "% " << endl;
+        } else {
+            cout << X[i]->ID_Klienta << " " << left << setw(12) << X[i]->Imie << " " << left << setw(12) << X[i]->Nazwisko 
+            << " Saldo konta: " << setw(20) << X[i]->Saldo_Konta << " Oprocentowanie: " << setw(4) << (X[i]->Oprocentowanie - 1) * 100 << "%" << endl;
+        }
     }
     cout<<endl;
 }
 
 //Wyszukiwanie klienta po ID
-void Search_Client(vector<Klient>& X) {
+void Search_Client(vector<Klient*>& X) {
     cout<<"\nSzukasz klienta"<<endl;
     int ID;
     char Choice = 'Y';
@@ -127,7 +169,7 @@ void Search_Client(vector<Klient>& X) {
         int Index;
 
         for (int i = 0; i < X.size(); i++) {
-            if (ID == X[i].ID_Klienta) {
+            if (ID == X[i]->ID_Klienta) {
                 Found = true;
                 Index = i;
                 break;
@@ -143,17 +185,21 @@ void Search_Client(vector<Klient>& X) {
 
         //Ponizszy kod wykona sie tylko jak bedzie znaleziony klient (Found == True)
         cout<<"\nDane klienta o ID: "<< ID <<endl;
-        cout<< X[Index].Imie << " " << X[Index].Nazwisko << "\nSaldo konta: " << X[Index].Saldo_Konta << "\nOprocentowanie: " << (X[Index].Oprocentowanie - 1) * 100 << "%\n" << endl;
+        cout<< X[Index]->Imie << " " << X[Index]->Nazwisko << "\nSaldo konta: " << X[Index]->Saldo_Konta << "\nOprocentowanie: " << (X[Index]->Oprocentowanie - 1) * 100 << "%\n" << endl;
         Choice = 'N';
     }
 }
 
-//Testowy vector klientow
-vector<Klient> List_Client = {
-    {1, "Adam", "Nowak", 1000, 1.02},
-    {2, "Anna", "Rak", 10000, 1.10},
-    {3, "Patryk", "Konski", 100, 1.02},
-    {4, "Elzbieta", "Krol", 2000, 1.02}
+//W przypadku vecktora obiektow korzystamy z kropki np. List_Client[1].Imie
+//W przypadku vecktora wskaźników do obiektów korzystamy z -> np. List_Client[1]->Imie  Wymagane jest to do polimorfizmu
+//Testowy vector klientow + polimorfizm
+vector<Klient*> List_Client = {
+    new Klient{1, "Adam", "Nowak", 1000, 1.02},
+    new Klient{2, "Anna", "Rak", 10000, 1.10},
+    new Klient{3, "Patryk", "Konski", 100, 1.02},
+    new Klient{4, "Elzbieta", "Krol", 2000, 1.02},
+    new KlientVIP{5, "Izabela", "Wipowska", 20000, 1.02, 0.10},
+    new KlientVIP{6, "Ryszard", "Bogacz", 25000, 1.02, 0.10}
 };
 
  int main() {
@@ -196,13 +242,13 @@ vector<Klient> List_Client = {
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
-                if(C_ID == List_Client[i].ID_Klienta) {
+                if(C_ID == List_Client[i]->ID_Klienta) {
                 M_Found = true;
                 M_Index = i;
                 break;
                 }
             }
-            if(M_Found == true)Top_Up_Account(List_Client[M_Index]);
+            if(M_Found == true)Top_Up_Account(*List_Client[M_Index]);
             else cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
             break;
         
@@ -211,13 +257,13 @@ vector<Klient> List_Client = {
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
-                if(C_ID == List_Client[i].ID_Klienta) {
+                if(C_ID == List_Client[i]->ID_Klienta) {
                 M_Found = true;
                 M_Index = i;
                 break;
                 }
             }
-            if(M_Found == true)Withdraw_Cash(List_Client[M_Index]);
+            if(M_Found == true)Withdraw_Cash(*List_Client[M_Index]);
             else cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
             break;
         
@@ -226,7 +272,7 @@ vector<Klient> List_Client = {
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
-                if(C_ID == List_Client[i].ID_Klienta) {
+                if(C_ID == List_Client[i]->ID_Klienta) {
                 M_Found = true;
                 M_Index = i;
                 break;
@@ -244,14 +290,14 @@ vector<Klient> List_Client = {
             cin>>C_ID_2;
             for (int i = 0; i < List_Client.size(); i++)
             {
-                if(C_ID_2 == List_Client[i].ID_Klienta) {
+                if(C_ID_2 == List_Client[i]->ID_Klienta) {
                 M_Found = true;
                 M_Index_2 = i;
                 break;
                 }
             }
 
-            if(M_Found == true && C_ID != C_ID_2)Money_Transfer(List_Client[M_Index], List_Client[M_Index_2]);
+            if(M_Found == true && C_ID != C_ID_2)Money_Transfer(*List_Client[M_Index], *List_Client[M_Index_2]);
             else {
                 cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
                 break;
@@ -263,13 +309,13 @@ vector<Klient> List_Client = {
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
-                if(C_ID == List_Client[i].ID_Klienta) {
+                if(C_ID == List_Client[i]->ID_Klienta) {
                 M_Found = true;
                 M_Index = i;
                 break;
                 }
             }
-            if(M_Found == true)Add_Interest_Money(List_Client[M_Index]);
+            if(M_Found == true)Add_Interest_Money(*List_Client[M_Index]);
             else cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
             break;
         
@@ -287,5 +333,12 @@ vector<Klient> List_Client = {
             break;
         }
     } while (M_Choice != 9);
+
+//Zwalnianie dynamicznie zaalokowanej pamieci - ochrona przez wyciekiem pamieci/memory leak
+    for (int i = 0; i < List_Client.size(); i++) {
+        delete List_Client[i];
+    }
+    List_Client.clear();    //Czysci wektor w celu nie wskazywania na zwolniona pamiec
+
     return 0;
  }
