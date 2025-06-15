@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -26,89 +27,96 @@ class KlientVIP : public Klient {
 //Dodawanie nowych klientów - Nowy klient saldo = 0, oprocentowanie = 2%
 Klient Add_Client(int Temp_ID) {
     Klient Temporary;
-    cout<<"Dodajesz wlasnie nowego klienta"<<endl;
-    cout<<"Podaj Imie: ";
+    cout<<"\nDodajesz wlasnie nowego klienta"<<endl;
+    cout<<"\nPodaj Imie: ";
     cin>>Temporary.Imie;
     cout<<"Podaj nazwisko: ";
     cin>>Temporary.Nazwisko;
     Temporary.Saldo_Konta = 0;
     Temporary.Oprocentowanie = 1.02;
     Temporary.ID_Klienta = Temp_ID + 1;
+    cout<<endl;
     return Temporary;
 }
 
 //Zasilenie konta klienta
 void Top_Up_Account(Klient& X)  {
     int T_Value;
-    cout<<"Wplacasz pieniadze na konto"<<endl;
+    cout<<"\nWplacasz pieniadze na konto"<<endl;
     do {
-        cout<<"Podaj kwote wplaty: ";
+        cout<<"\nPodaj kwote wplaty: ";
         cin>>T_Value;
-        if (T_Value<=0) cout<<"Kwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
+        if (T_Value<=0) cout<<"\nKwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
     } while (T_Value <= 0);
     X.Saldo_Konta += T_Value;
+    cout<<"Pieniadze wplacone\n"<<endl;
 }
 
 //Wypłata z konta klienta - do wysokości salda
 void Withdraw_Cash(Klient& X) {
     int T_Value;
-    cout<<"Wyplacasz pieniadze z konta"<<endl;
+    cout<<"\nWyplacasz pieniadze z konta"<<endl;
     do {
-    cout<<"Podaj kwote wyplaty: ";
+    cout<<"\nPodaj kwote wyplaty: ";
     cin>>T_Value;
     if (T_Value<=0) {
-        cout<<"Kwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
+        cout<<"\nKwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
     } else if (T_Value > X.Saldo_Konta) {
-        cout<<"Brak wystarczajacych srodkow. Sprbuj jeszcze raz"<<endl;
+        cout<<"\nBrak wystarczajacych srodkow. Sprobuj jeszcze raz"<<endl;
     }
     } while (T_Value <= 0 || T_Value > X.Saldo_Konta);
     X.Saldo_Konta -= T_Value;
+    cout<<"\nPieniadze wyplacone\n"<<endl;
 }
 
 //Przelew pomiędzy dwoma istniejącymi kontami
 void Money_Transfer(Klient& X, Klient& Y) {
     int T_Value;
-    cout<<"Przelewasz pieniadze na konto klienta o numerze " << Y.ID_Klienta <<endl;
+    cout<<"\nPrzelewasz pieniadze na konto klienta o numerze " << Y.ID_Klienta <<endl;
     do {
-    cout<<"Podaj kwote przelewu: ";
+    cout<<"\nPodaj kwote przelewu: ";
     cin>>T_Value;
     if (T_Value<=0) {
-        cout<<"Kwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
+        cout<<"\nKwota musi byc dodatnia. Sprobuj jeszcze raz"<<endl;
     } else if (T_Value > X.Saldo_Konta) {
-        cout<<"Brak wystarczajacych srodkow. Sprbuj jeszcze raz"<<endl;
+        cout<<"\nBrak wystarczajacych srodkow. Sprbuj jeszcze raz"<<endl;
     }
     } while (T_Value <= 0 || T_Value > X.Saldo_Konta);
     X.Saldo_Konta -= T_Value;
     Y.Saldo_Konta += T_Value;
+    cout<<"\nPieniadze przelane\n"<<endl;
 }
 
 //Naliczenie oprocentowania dla konta
-void Add_Interest_Money(Klient X) {
+void Add_Interest_Money(Klient& X) {
     X.Saldo_Konta *= X.Oprocentowanie;
+    cout<<"\nOprocentowanie naliczone\n"<<endl;
 }
 
 //Wyświetlanie listy wszystkich klientów
 void List_Of_Client(vector<Klient>& X) {  //Referencja w celu oszczędzania pamięci - większa szybkość bez kopiowania 
-    cout<<"Lista klientow"<<endl;
+    cout<<"\nLista klientow\n"<<endl;
     for (int i = 0; i < X.size(); i++)
     {
-        cout << X[i].ID_Klienta << " " << X[i].Imie << " " << X[i].Nazwisko << " " << X[i].Saldo_Konta << " " << X[i].Oprocentowanie << endl;
+        cout << X[i].ID_Klienta << " " << left << setw(12) << X[i].Imie << " " << left << setw(12) << X[i].Nazwisko 
+        << " Saldo konta: " << setw(20) << X[i].Saldo_Konta << " Oprocentowanie: " << setw(4) << (X[i].Oprocentowanie - 1) * 100 << "%" << endl;
     }
+    cout<<endl;
 }
 
 //Wyszukiwanie klienta po ID
 void Search_Client(vector<Klient>& X) {
-    cout<<"Szukasz klienta"<<endl;
+    cout<<"\nSzukasz klienta"<<endl;
     int ID;
     char Choice = 'Y';
     while (Choice == 'Y' || Choice == 'y') {
         
         do {
-            cout<<"Podaj ID klienta: ";
+            cout<<"\nPodaj ID klienta: ";
             cin>>ID;
 
             if (ID<0) { 
-                cout<<"Numer klienta musi byc dodatni"<<endl;
+                cout<<"\nNumer klienta musi byc dodatni"<<endl;
                 cout<<"Czy chcesz sprobowac jeszcze raz? Y/N: ";
                 cin>>Choice;
                 if (Choice == 'N' || Choice == 'n') return;
@@ -127,15 +135,16 @@ void Search_Client(vector<Klient>& X) {
             }
 
         if (!Found) {
-            cout<<"Nie ma klienta o podanym ID"<<endl;
+            cout<<"\nNie ma klienta o podanym ID"<<endl;
             cout<<"Czy chcesz sprobowac jeszcze raz? Y/N: ";
             cin>>Choice;
             continue;
         }
 
         //Ponizszy kod wykona sie tylko jak bedzie znaleziony klient (Found == True)
-        cout<<"Dane klienta "<< ID <<endl;
-        cout<< X[Index].Imie << " " << X[Index].Nazwisko << "\nSaldo konta: " << X[Index].Saldo_Konta << "\nOprocentowanie: " << (X[Index].Oprocentowanie - 1) * 100 << "%" << endl;
+        cout<<"\nDane klienta o ID: "<< ID <<endl;
+        cout<< X[Index].Imie << " " << X[Index].Nazwisko << "\nSaldo konta: " << X[Index].Saldo_Konta << "\nOprocentowanie: " << (X[Index].Oprocentowanie - 1) * 100 << "%\n" << endl;
+        Choice = 'N';
     }
 }
 
@@ -149,11 +158,11 @@ vector<Klient> List_Client = {
 
  int main() {
     int M_Choice;
-    cout<<"Witaj w aplikacji bankowej!"<<endl;
+    cout<<"Witaj w aplikacji bankowej!\n"<<endl;
 
     //Menu
     do {
-        cout<<"Menu"<<endl;
+        cout<<"Menu\n"<<endl;
         cout<<"1. Dodanie nowego klienta"<<endl;
         cout<<"2. Zasilenie konta"<<endl;
         cout<<"3. Wyplata z konta"<<endl;
@@ -166,9 +175,9 @@ vector<Klient> List_Client = {
 
         do
         {
-            cout<<"Podaj cyfre od 1 do 9.\nTwoj wybor: ";
+            cout<<"\nPodaj cyfre od 1 do 9.\nTwoj wybor: ";
             cin>> M_Choice;
-            if (M_Choice < 1 || M_Choice > 9) cout<<"Wybrales bledna cyfre"<<endl;
+            if (M_Choice < 1 || M_Choice > 9) cout<<"\nWybrales bledna cyfre"<<endl;
         } while (M_Choice < 1 || M_Choice > 9);
 
         int C_ID = 0, C_ID_2 = 0, M_Index = 0, M_Index_2 = 0;
@@ -183,7 +192,7 @@ vector<Klient> List_Client = {
             break;
         
         case 2:
-            cout<<"Dla klienta o jakim ID chcesz dokonac zasilenia konta: ";
+            cout<<"\nDla klienta o jakim ID chcesz dokonac zasilenia konta: ";
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
@@ -194,11 +203,11 @@ vector<Klient> List_Client = {
                 }
             }
             if(M_Found == true)Top_Up_Account(List_Client[M_Index]);
-            else cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+            else cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
             break;
         
         case 3:
-            cout<<"Dla klienta o jakim ID chcesz dokonac wyplaty: ";
+            cout<<"\nDla klienta o jakim ID chcesz dokonac wyplaty: ";
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
@@ -209,11 +218,11 @@ vector<Klient> List_Client = {
                 }
             }
             if(M_Found == true)Withdraw_Cash(List_Client[M_Index]);
-            else cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+            else cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
             break;
         
         case 4:
-            cout<<"Od klienta o jakim ID chcesz dokonac przelewu: ";
+            cout<<"\nOd klienta o jakim ID chcesz dokonac przelewu: ";
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
@@ -225,13 +234,13 @@ vector<Klient> List_Client = {
             }
 
             if(M_Found == false) {
-                cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+                cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
                 break;
             }
 
             M_Found = false;
 
-            cout<<"Do klienta o jakim ID chcesz dokonac przelewu: ";
+            cout<<"\nDo klienta o jakim ID chcesz dokonac przelewu: ";
             cin>>C_ID_2;
             for (int i = 0; i < List_Client.size(); i++)
             {
@@ -242,15 +251,15 @@ vector<Klient> List_Client = {
                 }
             }
 
-            if(M_Found == true)Money_Transfer(List_Client[M_Index], List_Client[M_Index_2]);
+            if(M_Found == true && C_ID != C_ID_2)Money_Transfer(List_Client[M_Index], List_Client[M_Index_2]);
             else {
-                cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+                cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
                 break;
             }
             break;
 
         case 5:
-            cout<<"Dla klienta o jakim ID chcesz dokonac naliczenia oprocentowania: ";
+            cout<<"\nDla klienta o jakim ID chcesz dokonac naliczenia oprocentowania: ";
             cin>>C_ID;
             for (int i = 0; i < List_Client.size(); i++)
             {
@@ -261,7 +270,7 @@ vector<Klient> List_Client = {
                 }
             }
             if(M_Found == true)Add_Interest_Money(List_Client[M_Index]);
-            else cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+            else cout<<"\nBledny numer klienta. Powrot do menu\n"<<endl;
             break;
         
         case 6:
@@ -273,8 +282,8 @@ vector<Klient> List_Client = {
             break;
 
         case 8:
-            cout<<"Autor: Sebastian Musial"<<endl;
-            cout<<"Indeks: 162790"<<endl;
+            cout<<"\nAutor: Sebastian Musial"<<endl;
+            cout<<"Indeks: 162790\n"<<endl;
             break;
         }
     } while (M_Choice != 9);
