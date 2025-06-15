@@ -24,7 +24,7 @@ class KlientVIP : public Klient {
 };
 
 //Dodawanie nowych klientów - Nowy klient saldo = 0, oprocentowanie = 2%
-Klient Add_Client() {
+Klient Add_Client(int Temp_ID) {
     Klient Temporary;
     cout<<"Dodajesz wlasnie nowego klienta"<<endl;
     cout<<"Podaj Imie: ";
@@ -33,6 +33,7 @@ Klient Add_Client() {
     cin>>Temporary.Nazwisko;
     Temporary.Saldo_Konta = 0;
     Temporary.Oprocentowanie = 1.02;
+    Temporary.ID_Klienta = Temp_ID + 1;
     return Temporary;
 }
 
@@ -140,10 +141,10 @@ void Search_Client(vector<Klient>& X) {
 
 //Testowy vector klientow
 vector<Klient> List_Client = {
-    {1234, "Adam", "Nowak", 1000, 1.02},
-    {3721, "Anna", "Rak", 10000, 1.10},
-    {919, "Patryk", "Konski", 100, 1.02},
-    {2222, "Elzbieta", "Krol", 2000, 1.02}
+    {1, "Adam", "Nowak", 1000, 1.02},
+    {2, "Anna", "Rak", 10000, 1.10},
+    {3, "Patryk", "Konski", 100, 1.02},
+    {4, "Elzbieta", "Krol", 2000, 1.02}
 };
 
  int main() {
@@ -177,7 +178,8 @@ vector<Klient> List_Client = {
         switch (M_Choice)
         {
         case 1:
-            List_Client.push_back(Add_Client());
+
+            List_Client.push_back(Add_Client(List_Client.size()));
             break;
         
         case 2:
