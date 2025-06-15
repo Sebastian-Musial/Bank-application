@@ -145,3 +145,136 @@ vector<Klient> List_Client = {
     {919, "Patryk", "Konski", 100, 1.02},
     {2222, "Elzbieta", "Krol", 2000, 1.02}
 };
+
+ int main() {
+    int M_Choice;
+    cout<<"Witaj w aplikacji bankowej!"<<endl;
+
+    //Menu
+    do {
+        cout<<"Menu"<<endl;
+        cout<<"1. Dodanie nowego klienta"<<endl;
+        cout<<"2. Zasilenie konta"<<endl;
+        cout<<"3. Wyplata z konta"<<endl;
+        cout<<"4. Przelew pomiedzy kontami"<<endl;
+        cout<<"5. Naliczenie oprocentowania"<<endl;
+        cout<<"6. Wyswietlenie listy klientow"<<endl;
+        cout<<"7. Wyszukanie klienta po ID"<<endl;
+        cout<<"8. Autor"<<endl;
+        cout<<"9. Wyjscie z programu"<<endl;
+
+        do
+        {
+            cout<<"Podaj cyfre od 1 do 9.\nTwoj wybor: ";
+            cin>> M_Choice;
+            if (M_Choice < 1 || M_Choice > 9) cout<<"Wybrales bledna cyfre"<<endl;
+        } while (M_Choice < 1 || M_Choice > 9);
+
+        int C_ID = 0, C_ID_2 = 0, M_Index = 0, M_Index_2 = 0;
+        bool M_Found;
+        M_Found = false;
+
+        switch (M_Choice)
+        {
+        case 1:
+            List_Client.push_back(Add_Client());
+            break;
+        
+        case 2:
+            cout<<"Dla klienta o jakim ID chcesz dokonac zasilenia konta: ";
+            cin>>C_ID;
+            for (int i = 0; i < List_Client.size(); i++)
+            {
+                if(C_ID == List_Client[i].ID_Klienta) {
+                M_Found = true;
+                M_Index = i;
+                break;
+                }
+            }
+            if(M_Found == true)Top_Up_Account(List_Client[M_Index]);
+            else cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+            break;
+        
+        case 3:
+            cout<<"Dla klienta o jakim ID chcesz dokonac wyplaty: ";
+            cin>>C_ID;
+            for (int i = 0; i < List_Client.size(); i++)
+            {
+                if(C_ID == List_Client[i].ID_Klienta) {
+                M_Found = true;
+                M_Index = i;
+                break;
+                }
+            }
+            if(M_Found == true)Withdraw_Cash(List_Client[M_Index]);
+            else cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+            break;
+        
+        case 4:
+            cout<<"Od klienta o jakim ID chcesz dokonac przelewu: ";
+            cin>>C_ID;
+            for (int i = 0; i < List_Client.size(); i++)
+            {
+                if(C_ID == List_Client[i].ID_Klienta) {
+                M_Found = true;
+                M_Index = i;
+                break;
+                }
+            }
+
+            if(M_Found == false) {
+                cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+                break;
+            }
+
+            M_Found = false;
+
+            cout<<"Do klienta o jakim ID chcesz dokonac przelewu: ";
+            cin>>C_ID_2;
+            for (int i = 0; i < List_Client.size(); i++)
+            {
+                if(C_ID_2 == List_Client[i].ID_Klienta) {
+                M_Found = true;
+                M_Index_2 = i;
+                break;
+                }
+            }
+
+            if(M_Found == true)Money_Transfer(List_Client[M_Index], List_Client[M_Index_2]);
+            else {
+                cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+                break;
+            }
+            break;
+
+        case 5:
+            cout<<"Dla klienta o jakim ID chcesz dokonac naliczenia oprocentowania: ";
+            cin>>C_ID;
+            for (int i = 0; i < List_Client.size(); i++)
+            {
+                if(C_ID == List_Client[i].ID_Klienta) {
+                M_Found = true;
+                M_Index = i;
+                break;
+                }
+            }
+            if(M_Found == true)Add_Interest_Money(List_Client[M_Index]);
+            else cout<<"Bledny numer klienta. Powrot do menu"<<endl;
+            break;
+        
+        case 6:
+            List_Of_Client(List_Client);
+            break;
+
+        case 7:
+            Search_Client(List_Client);
+            break;
+
+        case 8:
+            cout<<"Autor: Sebastian Musial"<<endl;
+            cout<<"Indeks: 162790"<<endl;
+            break;
+        }
+    } while (M_Choice != 9);
+    return 0;
+ }
